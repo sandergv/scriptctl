@@ -41,6 +41,18 @@ type ContextConfig struct {
 	Data map[string]interface{} `yaml:"data" json:"data"`
 }
 
+type NamespaceConfig struct {
+	Name string `yaml:"name" json:"name"`
+}
+
+type EndpointConfig struct {
+	Name      string `yaml:"name" json:"name"`
+	Namespace string `yaml:"namespace" json:"namespace"`
+	Private   bool   `yaml:"private" json:"private"`
+	Method    string `yaml:"method" json:"method"`
+	Exec      string `yaml:"exec" json:"exec"`
+}
+
 type ConfigFile struct {
 	Script  **ScriptConfig `yaml:"script" json:"script"`
 	Exec    *ExecConfig    `yaml:"exec" json:"exec"`

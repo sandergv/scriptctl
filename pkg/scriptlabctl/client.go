@@ -4,19 +4,26 @@ import "net/http"
 
 type Client struct {
 	url     string
+	token   string
 	http    *http.Client
 	headers map[string]string
 }
 
 func NewClient(token string) *Client {
 
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	if token != "" {
+		headers["Authorization"] = "Bearer " + token
+	}
+
 	return &Client{
-		url:  "http://localhost:6892",
-		http: &http.Client{},
-		headers: map[string]string{
-			"Content-Type":  "application/json",
-			"Authorization": "Bearer " + token,
-		},
+		url:     "http://localhost:6892",
+		http:    &http.Client{},
+		token:   token,
+		headers: headers,
 	}
 }
 

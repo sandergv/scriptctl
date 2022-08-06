@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/sandergv/scriptctl/pkg/scriptlabctl/types"
@@ -24,7 +25,7 @@ func (c *Client) RunCode(opts types.RunCodeOptions) (types.RunDetails, error) {
 		return types.RunDetails{}, err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, c.url+"/run", bytes.NewBuffer(body))
+	req, err := http.NewRequest(http.MethodPost, c.url+"/v1/run", bytes.NewBuffer(body))
 	if err != nil {
 		return types.RunDetails{},
 			err
@@ -35,7 +36,7 @@ func (c *Client) RunCode(opts types.RunCodeOptions) (types.RunDetails, error) {
 
 	//
 	res, err := c.http.Do(req)
-
+	fmt.Println(res.StatusCode)
 	// parsing response
 	response := types.RunResponse{}
 	json.NewDecoder(res.Body).Decode(&response)

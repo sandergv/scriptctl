@@ -5,7 +5,7 @@ type RunCodeOptions struct {
 	Type    string
 	Env     []string
 	Args    []string
-	Body    map[string]interface{}
+	Data    map[string]interface{}
 	Code    string
 }
 
