@@ -20,7 +20,7 @@ func (args) Version() string {
 
 func Exec(client *scriptlabctl.Client) {
 	var args args
-	arg.MustParse(&args)
+	_ = arg.MustParse(&args)
 	switch {
 	case args.Auth != nil:
 		args.Auth.handle(client)

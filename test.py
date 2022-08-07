@@ -1,3 +1,5 @@
 import os
 
-print(os.environ)
+from scriptlab import Scriptlab
+
+sl = Scriptlab()

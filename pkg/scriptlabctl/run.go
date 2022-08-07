@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/sandergv/scriptctl/pkg/scriptlabctl/types"
@@ -36,7 +35,7 @@ func (c *Client) RunCode(opts types.RunCodeOptions) (types.RunDetails, error) {
 
 	//
 	res, err := c.http.Do(req)
-	fmt.Println(res.StatusCode)
+	// fmt.Println(res.StatusCode)
 	// parsing response
 	response := types.RunResponse{}
 	json.NewDecoder(res.Body).Decode(&response)
