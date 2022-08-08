@@ -11,7 +11,7 @@ type RunCodeOptions struct {
 
 type RunExecOptions struct {
 	ExecID string
-	Body   map[string]interface{}
+	Data   map[string]interface{}
 }
 
 type RunExecRequest struct {

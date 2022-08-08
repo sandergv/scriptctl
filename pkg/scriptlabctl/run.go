@@ -52,7 +52,7 @@ func (c *Client) RunCode(opts types.RunCodeOptions) (types.RunDetails, error) {
 func (c *Client) RunExec(opts types.RunExecOptions) (types.RunDetails, error) {
 
 	request := types.RunExecRequest{
-		Body: opts.Body,
+		Body: opts.Data,
 	}
 
 	body, err := json.Marshal(request)

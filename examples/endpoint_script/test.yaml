@@ -1,11 +1,16 @@
 script:
   name: "endpoint_script"
+  description: ""
   file-name: "script.py"
   type: "python"
   path: "./script.py"
 
 exec:
-  env:
+  exec-env: "default-pyenv" 
+  # script: ""
+  # context: ""
+  # env-file: ""
+  environment:
     - "TEST=1"
     - "TEST=true"
 
@@ -17,4 +22,4 @@ endpoint:
   name: "script"
   namespace: "test"
   private: false
-  method: "get"
+  method: "get" # get or post

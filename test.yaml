@@ -1,9 +1,0 @@
-script:
-  type: python
-  file-name: test.py
-
-exec:
-  exec-env: default-pyenv
-  env:
-    TEST: true
-    TEST2: 1

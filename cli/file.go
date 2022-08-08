@@ -2,12 +2,13 @@ package cli
 
 //
 type ScriptConfig struct {
-
+	Name        string `yaml:"name" json:"name"`
+	Description string `yaml:"description" json:"description"`
 	// Required
 	Type string `yaml:"type" json:"type"`
 
 	// Required
-	FileName string `yaml:"file-name" json:"file_name"`
+	FilePath string `yaml:"file-path" json:"file_path"`
 
 	// Optional
 	DefaultExec bool `yaml:"default-exec" json:"default_exec"`
@@ -54,7 +55,9 @@ type EndpointConfig struct {
 }
 
 type ConfigFile struct {
-	Script  **ScriptConfig `yaml:"script" json:"script"`
+	Script  *ScriptConfig  `yaml:"script" json:"script"`
 	Exec    *ExecConfig    `yaml:"exec" json:"exec"`
 	Context *ContextConfig `yaml:"context" json:"context"`
+	// Namespace
+	Endpoint *EndpointConfig `yaml:"endpoint" json:"endpoint"`
 }
