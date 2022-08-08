@@ -1,5 +1,15 @@
 package cli
 
+import (
+	"errors"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"strings"
+
+	"gopkg.in/yaml.v3"
+)
+
 //
 type ScriptConfig struct {
 	Name        string `yaml:"name" json:"name"`
@@ -8,7 +18,7 @@ type ScriptConfig struct {
 	Type string `yaml:"type" json:"type"`
 
 	// Required
-	FilePath string `yaml:"file-path" json:"file_path"`
+	FilePath string `yaml:"path" json:"path"`
 
 	// Optional
 	DefaultExec bool `yaml:"default-exec" json:"default_exec"`
@@ -22,7 +32,10 @@ type ExecConfig struct {
 	ExecEnv string `yaml:"exec-env" json:"exec_env"`
 
 	// Optional
-	Env map[string]interface{} `yaml:"env" json:"env"`
+	EnvFile string `yaml:"env-file" json:"env_file"`
+
+	// Optional
+	Env []string `yaml:"env" json:"env"`
 
 	// Optional
 	Args []string `yaml:"args" json:"args"`
@@ -60,4 +73,48 @@ type ConfigFile struct {
 	Context *ContextConfig `yaml:"context" json:"context"`
 	// Namespace
 	Endpoint *EndpointConfig `yaml:"endpoint" json:"endpoint"`
+}
+
+func parseConfig(fp string) (ConfigFile, error) {
+
+	fileInfo, err := os.Stat(fp)
+	if os.IsNotExist(err) {
+		fmt.Println("aqui")
+		return ConfigFile{}, err
+	}
+	if fileInfo.IsDir() {
+		return ConfigFile{}, errors.New("the path is a directory, not a file")
+	}
+
+	file, err := ioutil.ReadFile(fp)
+	if err != nil {
+		fmt.Println("aqui")
+		return ConfigFile{}, err
+	}
+
+	cfg := ConfigFile{}
+
+	err = yaml.Unmarshal(file, &cfg)
+
+	return cfg, err
+}
+
+func handleEnvFile(fp string) ([]string, error) {
+
+	fileInfo, err := os.Stat(fp)
+	if os.IsNotExist(err) {
+		fmt.Println("aqui")
+		return nil, err
+	}
+	if fileInfo.IsDir() {
+		return nil, errors.New("the path is a directory, not a file")
+	}
+
+	content, err := ioutil.ReadFile(fp)
+	if err != nil {
+		return nil, err
+	}
+
+	envList := strings.Split(string(content), "\n")
+	return envList, nil
 }

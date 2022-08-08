@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 
 	"github.com/sandergv/scriptctl/pkg/scriptlabctl"
@@ -20,52 +19,74 @@ type CreateCMD struct {
 
 func (c *CreateCMD) handle(ctx context.Context) error {
 
-	if c.FilePath == "" {
-		return errors.New("FILEPATH parameter is required if no command is provide")
+	switch {
+	case c.Script != nil:
+		// do something
+	default:
+		fmt.Println("aqui")
+		if c.FilePath == "" {
+			return errors.New("FILEPATH parameter is required if no command is provide")
+		}
+		createFromConfig(ctx, c.FilePath)
 	}
+	return nil
+}
 
-	fileInfo, err := os.Stat(c.FilePath)
-	if os.IsNotExist(err) {
+// createFromConfig creates create entities fgrom a config file
+func createFromConfig(ctx context.Context, fp string) error {
+
+	cfg, err := parseConfig(fp)
+	if err != nil {
 		return err
 	}
-	if fileInfo.IsDir() {
-		return errors.New("the path is a directory, not a file")
+
+	client := ctx.Value(ClientContextKey).(*scriptlabctl.Client)
+	scriptId := ""
+	execId := ""
+	if cfg.Script != nil {
+		scriptId, err = createScript(client, *cfg.Script)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+		fmt.Println("Script ID:", scriptId)
+	}
+	if cfg.Exec != nil {
+		execId, _ = createExec(client, scriptId, *cfg.Exec)
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+		fmt.Println("Exec ID:", execId)
 	}
 
 	return nil
 }
 
-func create(ctx context.Context, cfg ConfigFile) error {
+func createScript(client *scriptlabctl.Client, cfg ScriptConfig) (string, error) {
+	// fmt.Println(cfg)
+	fileName := filepath.Base(cfg.FilePath)
 
-	client := ctx.Value(ClientContextKey).(*scriptlabctl.Client)
-
-	scriptId := ""
-
-	if cfg.Script != nil {
-
-		f, err := os.Stat(cfg.Script.FilePath)
-		if os.IsNotExist(err) {
-			return errors.New("file does not exist")
-		}
-		if f.IsDir() {
-			return errors.New("the path is a directory")
-		}
-
-		fileName := filepath.Base(cfg.Script.FilePath)
-
-		content, err := ioutil.ReadFile(cfg.Script.FilePath)
-		if err != nil {
-			return err
-		}
-		scriptId, err = client.CreateScript(types.CreateScriptOptions{
-			Name: cfg.Script.Name,
-			// description
-			Type:        cfg.Script.Type,
-			FileName:    fileName,
-			FileContent: string(content),
-		})
-		fmt.Println("Script ID:", scriptId)
+	content, err := ioutil.ReadFile(cfg.FilePath)
+	if err != nil {
+		fmt.Println("aqu")
+		return "", err
 	}
+	return client.CreateScript(types.CreateScriptOptions{
+		Name: cfg.Name,
+		// description
+		Type:        cfg.Type,
+		FileName:    fileName,
+		FileContent: string(content),
+	})
+}
 
-	return nil
+func createExec(client *scriptlabctl.Client, sid string, cfg ExecConfig) (string, error) {
+
+	return client.CreateExec(types.CreateExecRequest{
+		ExecEnv:  cfg.ExecEnv,
+		ScriptID: sid,
+		Env:      cfg.Env,
+		Args:     cfg.Args,
+	})
 }
