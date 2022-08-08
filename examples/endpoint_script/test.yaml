@@ -1,7 +1,6 @@
 script:
   name: "endpoint_script"
   description: ""
-  file-name: "script.py"
   type: "python"
   path: "./script.py"
 
@@ -10,7 +9,7 @@ exec:
   # script: ""
   # context: ""
   # env-file: ""
-  environment:
+  env:
     - "TEST=1"
     - "TEST=true"
 
