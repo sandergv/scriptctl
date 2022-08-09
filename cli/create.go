@@ -1,3 +1,5 @@
+// TODO: every error must return the command that has the error
+
 package cli
 
 import (
@@ -14,22 +16,29 @@ import (
 type CreateCMD struct {
 	Script *CreateScriptCMD `arg:"subcommand:script"`
 
-	FilePath string `arg:"--file"`
+	Namespace *CreateNamespaceCMD `arg:"subcommand:namespace"`
+	FilePath  string              `arg:"--file"`
 }
 
 func (c *CreateCMD) handle(ctx context.Context) error {
 
+	var err error
+
 	switch {
 	case c.Script != nil:
 		// do something
+	case c.Namespace != nil:
+		//
+		err = c.Namespace.handle(ctx)
+
 	default:
 		fmt.Println("aqui")
 		if c.FilePath == "" {
-			return errors.New("FILEPATH parameter is required if no command is provide")
+			return errors.New("create:FILEPATH parameter is required if no command is provide")
 		}
 		createFromConfig(ctx, c.FilePath)
 	}
-	return nil
+	return err
 }
 
 // createFromConfig creates create entities fgrom a config file
@@ -66,6 +75,10 @@ func createFromConfig(ctx context.Context, fp string) error {
 func createScript(client *scriptlabctl.Client, cfg ScriptConfig) (string, error) {
 	// fmt.Println(cfg)
 	fileName := filepath.Base(cfg.FilePath)
+
+	if cfg.Type == "" {
+		return "", errors.New("type parameter can't be empty")
+	}
 
 	content, err := ioutil.ReadFile(cfg.FilePath)
 	if err != nil {

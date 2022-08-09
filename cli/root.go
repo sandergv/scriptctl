@@ -44,6 +44,7 @@ func Exec(client *scriptlabctl.Client) {
 	case args.Create != nil:
 		err := args.Create.handle(ctx)
 		if err != nil {
+			fmt.Println(err)
 			fmt.Println("Error:", err.Error())
 			p.WriteHelpForSubcommand(os.Stdout, "create")
 		}
