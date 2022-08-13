@@ -3,7 +3,6 @@ package cli
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/alexflint/go-arg"
 	"github.com/sandergv/scriptlab/pkg/scriptlabctl"
@@ -24,15 +23,19 @@ func getParserFromContext(ctx context.Context) *arg.Parser {
 }
 
 type args struct {
-	Auth   *AuthCMD   `arg:"subcommand:auth"`
-	Create *CreateCMD `arg:"subcommand:create"`
+	Auth *AuthCMD `arg:"subcommand:auth" help:"Manage authentication"`
 
-	Script    *ScriptCMD    `arg:"subcommand:script"`
-	Namespace *NamespaceCMD `arg:"subcommand:namespace"`
-	Endpoint  *EndpointCMD  `arg:"subcommand:endpoint"`
+	// management commands
+	Script    *ScriptCMD    `arg:"subcommand:script" help:"Manage scripts"`
+	Exec      *ExecCMD      `arg:"subcommand:exec" help:"Manage execution configs"`
+	Namespace *NamespaceCMD `arg:"subcommand:namespace" help:"Manage namespaces"`
+	Endpoint  *EndpointCMD  `arg:"subcommand:endpoint" help:"Manage endpoints"`
+	Action    *ActionCMD    `arg:"subcommand:action" help:"Manage actions"`
 
-	Run     *RunCMD     `arg:"subcommand:run"`
-	Version *VersionCMD `arg:"subcommand:version"`
+	// comands
+	Create  *CreateCMD  `arg:"subcommand:create" help:"Create resources with a configuration file"`
+	Run     *RunCMD     `arg:"subcommand:run" help:"Run a script with the given options"`
+	Version *VersionCMD `arg:"subcommand:version" help:"Show scriptlab version"`
 }
 
 // func (args) Version() string {
@@ -46,7 +49,7 @@ func Exec(client *scriptlabctl.Client) {
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, ClientContextKey, client)
 	ctx = context.WithValue(ctx, ParentCommandContextKey, "root")
-	ctx = context.WithValue(ctx, ParentCommandContextKey, p)
+	ctx = context.WithValue(ctx, ParserContextKey, p)
 
 	switch {
 	case args.Auth != nil:
@@ -56,8 +59,12 @@ func Exec(client *scriptlabctl.Client) {
 		err := args.Script.handle(ctx)
 		if err != nil {
 			fmt.Println(err)
-			fmt.Println("Error:", err.Error())
-			p.WriteHelpForSubcommand(os.Stdout, "script")
+			p.FailSubcommand(err.Error(), "script")
+		}
+	case args.Exec != nil:
+		err := args.Exec.handle(ctx)
+		if err != nil {
+			p.FailSubcommand(err.Error(), "exec")
 		}
 
 	case args.Create != nil:
@@ -75,7 +82,11 @@ func Exec(client *scriptlabctl.Client) {
 		if err != nil {
 			p.FailSubcommand(err.Error(), "endpoint")
 		}
-
+	case args.Action != nil:
+		err := args.Action.handle(ctx)
+		if err != nil {
+			p.FailSubcommand(err.Error(), "action")
+		}
 	case args.Run != nil:
 		args.Run.handle(client)
 

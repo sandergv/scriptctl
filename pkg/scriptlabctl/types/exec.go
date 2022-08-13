@@ -5,14 +5,18 @@ type EnvLookup struct {
 	Name string `json:"name"`
 }
 
+type ScriptLookup struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
 type Exec struct {
 	ID string `json:"id"`
 	// Name    string    `json:"name"`
-	ExecEnv EnvLookup `json:"exec_env"`
-	Type    string    `json:"type"`
-	File    string    `json:"file"`
-	Env     []string  `json:"env"`
-	Args    []string  `json:"args"`
+	ExecEnv EnvLookup    `json:"exec_env"`
+	Script  ScriptLookup `json:"script"`
+	Env     []string     `json:"env"`
+	Args    []string     `json:"args"`
 }
 
 type CreateExecRequest struct {

@@ -72,12 +72,18 @@ type EndpointConfig struct {
 	Exec      string `yaml:"exec" json:"exec"`
 }
 
+type ActionConfig struct {
+	Name string `yaml:"name" json:"name"`
+	Exec string `yaml:"exec" json:"exec"`
+}
+
 type ConfigFile struct {
 	Script  *ScriptConfig  `yaml:"script" json:"script"`
 	Exec    *ExecConfig    `yaml:"exec" json:"exec"`
 	Context *ContextConfig `yaml:"context" json:"context"`
 	// Namespace
 	Endpoint *EndpointConfig `yaml:"endpoint" json:"endpoint"`
+	Action   *ActionConfig   `yaml:"action" json:"action"`
 }
 
 func parseConfig(fp string) (ConfigFile, error) {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"regexp"
 	"strconv"
 
 	"github.com/sandergv/scriptlab/pkg/scriptlabctl"
@@ -40,6 +41,10 @@ func (c *CreateNamespaceCMD) handle(ctx context.Context) error {
 
 	if c.Name == "" {
 		return errors.New("NAME parameter is required")
+	}
+	valid, _ := regexp.MatchString("^[a-z-_]{3,12}", c.Name)
+	if !valid {
+		return errors.New("invalid namespace name")
 	}
 
 	client := ctx.Value(ClientContextKey).(*scriptlabctl.Client)

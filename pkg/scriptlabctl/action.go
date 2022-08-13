@@ -9,9 +9,9 @@ import (
 	"github.com/sandergv/scriptlab/pkg/scriptlabctl/types"
 )
 
-func (c *Client) CreateExec(opts types.CreateExecRequest) (string, error) {
+func (c *Client) CreateAction(opts types.CreateActionRequest) (string, error) {
 
-	url := c.url + "/v1/exec"
+	url := c.url + "/v1/action"
 
 	body, err := json.Marshal(opts)
 	if err != nil {
@@ -28,27 +28,29 @@ func (c *Client) CreateExec(opts types.CreateExecRequest) (string, error) {
 
 	//
 	res, err := c.http.Do(req)
-
-	response := types.CreateExecResponse{}
-	json.NewDecoder(res.Body).Decode(&response)
 	if err != nil {
 		return "", err
 	}
 
-	if response.Status != "success" {
+	response := types.CreateActionResponse{}
+	err = json.NewDecoder(res.Body).Decode(&response)
+	if err != nil {
+		return "", err
+	}
+
+	if response.Status == "error" {
 		return "", errors.New(response.Error)
 	}
 	return response.ID, nil
-
 }
 
-func (c *Client) GetExecList() ([]types.Exec, error) {
+func (c *Client) GetActionList() ([]types.Action, error) {
 
-	url := c.url + "/v1/exec"
+	url := c.url + "/v1/action"
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		return []types.Exec{}, err
+		return []types.Action{}, err
 	}
 
 	// add headers values
@@ -57,14 +59,14 @@ func (c *Client) GetExecList() ([]types.Exec, error) {
 	//
 	res, err := c.http.Do(req)
 
-	response := types.GetExecListResponse{}
+	response := types.GetActionListResponse{}
 	json.NewDecoder(res.Body).Decode(&response)
 	if err != nil {
-		return []types.Exec{}, err
+		return []types.Action{}, err
 	}
 
-	if response.Status != "success" {
-		return []types.Exec{}, errors.New("unexpected error")
+	if response.Status == "error" {
+		return []types.Action{}, errors.New(response.Error)
 	}
 	return response.Data, nil
 

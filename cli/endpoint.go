@@ -14,17 +14,19 @@ type EndpointCMD struct {
 
 func (e *EndpointCMD) handle(ctx context.Context) error {
 
+	p := getParserFromContext(ctx)
+
 	switch {
 	case e.Create != nil:
 		err := e.Create.handle(ctx)
 		if err != nil {
-			return err
+			p.FailSubcommand(err.Error(), "endpoint", "create")
 		}
 
 	case e.List != nil:
 		err := e.List.handle(ctx)
 		if err != nil {
-			return err
+			p.FailSubcommand(err.Error(), "endpoint", "list")
 		}
 	}
 
@@ -35,8 +37,8 @@ type CreateEndpointCMD struct {
 	Name      string `arg:"positional,required"`
 	Api       string `arg:"" default:"private"`
 	Method    string `arg:"" default:"get"`
-	Namespace string `arg:"positional"`
-	ExecID    string `arg:"positional"`
+	Namespace string `arg:"positional,required"`
+	ExecID    string `arg:"positional,required"`
 }
 
 func (c *CreateEndpointCMD) handle(ctx context.Context) error {
