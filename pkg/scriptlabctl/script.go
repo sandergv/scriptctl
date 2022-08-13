@@ -6,12 +6,16 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/sandergv/scriptctl/pkg/scriptlabctl/types"
+	"github.com/sandergv/scriptlab/pkg/scriptlabctl/types"
 )
 
 func (c *Client) CreateScript(opts types.CreateScriptOptions) (string, error) {
 
 	url := c.url + "/v1/script"
+
+	if len(opts.Name) > 24 {
+		return "", errors.New("script name is too long")
+	}
 
 	body, err := json.Marshal(opts)
 	if err != nil {
@@ -39,4 +43,31 @@ func (c *Client) CreateScript(opts types.CreateScriptOptions) (string, error) {
 		return "", errors.New(response.Error)
 	}
 	return response.ID, nil
+}
+
+func (c *Client) GetScriptList() ([]types.Script, error) {
+
+	url := c.url + "/v1/script"
+
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return []types.Script{}, err
+	}
+
+	// add headers values
+	c.setHeaders(req)
+
+	//
+	res, err := c.http.Do(req)
+
+	response := types.GetScriptListResponse{}
+	json.NewDecoder(res.Body).Decode(&response)
+	if err != nil {
+		return []types.Script{}, err
+	}
+
+	if response.Status != "success" {
+		return []types.Script{}, errors.New(response.Error)
+	}
+	return response.Data, nil
 }

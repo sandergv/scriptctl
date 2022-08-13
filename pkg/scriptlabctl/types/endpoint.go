@@ -6,15 +6,15 @@ type NamespaceLookup struct {
 }
 
 type Endpoint struct {
-	ID        string           `json:"id"`
-	Name      string           `json:"name"`
-	Namespace *NamespaceLookup `json:"namespace,omitempty"`
-	Private   bool             `json:"private"`
-	Method    string           `json:"method"`
-	ExecID    string           `json:"exec_id"`
+	ID        string `json:"id"`
+	Name      string `json:"name"`
+	Namespace string `json:"namespace,omitempty"`
+	Private   bool   `json:"private"`
+	Method    string `json:"method"`
+	ExecID    string `json:"exec_id"`
 }
 
-type CreateEndpointRequest struct {
+type CreateEndpointOptions struct {
 	Name      string `json:"name"`
 	Namespace string `json:"namespace"`
 	Private   bool   `json:"private"`
@@ -29,6 +29,7 @@ type CreateEndpointRequest struct {
 
 type CreateEndpointResponse struct {
 	Status string `json:"status"`
+	Error  string `json:"error"`
 	ID     string `json:"id"`
 }
 

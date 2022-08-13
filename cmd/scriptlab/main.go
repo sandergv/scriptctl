@@ -6,8 +6,8 @@ import (
 	"os"
 	"path"
 
-	"github.com/sandergv/scriptctl/cli"
-	"github.com/sandergv/scriptctl/pkg/scriptlabctl"
+	"github.com/sandergv/scriptlab/cli"
+	"github.com/sandergv/scriptlab/pkg/scriptlabctl"
 )
 
 func main() {

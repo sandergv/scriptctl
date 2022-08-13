@@ -4,10 +4,33 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
 
-	"github.com/sandergv/scriptctl/pkg/scriptlabctl"
-	"github.com/sandergv/scriptctl/pkg/scriptlabctl/types"
+	"github.com/sandergv/scriptlab/pkg/scriptlabctl"
+	"github.com/sandergv/scriptlab/pkg/scriptlabctl/types"
 )
+
+type NamespaceCMD struct {
+	Create *CreateNamespaceCMD `arg:"subcommand:create"`
+	List   *ListNamespaceCMD   `arg:"subcommand:list"`
+}
+
+func (n *NamespaceCMD) handle(ctx context.Context) error {
+
+	switch {
+	case n.Create != nil:
+		err := n.Create.handle(ctx)
+		if err != nil {
+			return err
+		}
+	case n.List != nil:
+		err := n.List.handle(ctx)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
 type CreateNamespaceCMD struct {
 	Name string `arg:"positional"`
@@ -28,5 +51,29 @@ func (c *CreateNamespaceCMD) handle(ctx context.Context) error {
 		return err
 	}
 	fmt.Println("Namespace ID:", id)
+	return nil
+}
+
+type ListNamespaceCMD struct {
+}
+
+func (l *ListNamespaceCMD) handle(ctx context.Context) error {
+
+	client := getClientFromContext(ctx)
+
+	nss, err := client.GetNamespaceList()
+	if err != nil {
+		return err
+	}
+
+	header := []string{"ID", "NAME", "ENDPOINTS"}
+
+	data := [][]string{}
+	for _, v := range nss {
+		data = append(data, []string{v.ID, v.Name, strconv.Itoa(len(v.Endpoints))})
+	}
+
+	showTable(header, data)
+
 	return nil
 }

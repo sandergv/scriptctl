@@ -9,9 +9,9 @@ import (
 	"github.com/sandergv/scriptlab/pkg/scriptlabctl/types"
 )
 
-func (c *Client) CreateNamespace(opts types.CreateNamespaceOptions) (string, error) {
+func (c *Client) CreateEndpoint(opts types.CreateEndpointOptions) (string, error) {
 
-	url := c.url + "/v1/namespace"
+	url := c.url + "/v1/endpoint"
 
 	body, err := json.Marshal(opts)
 	if err != nil {
@@ -29,7 +29,7 @@ func (c *Client) CreateNamespace(opts types.CreateNamespaceOptions) (string, err
 	//
 	res, err := c.http.Do(req)
 
-	response := types.CreateNamespaceResponse{}
+	response := types.CreateEndpointResponse{}
 	json.NewDecoder(res.Body).Decode(&response)
 	if err != nil {
 		return "", err
@@ -41,13 +41,17 @@ func (c *Client) CreateNamespace(opts types.CreateNamespaceOptions) (string, err
 	return response.ID, nil
 }
 
-func (c *Client) GetNamespaceList() ([]types.Namespace, error) {
+func (c *Client) GetEndpointList(namespace string) ([]types.Endpoint, error) {
 
-	url := c.url + "/v1/namespace"
+	url := c.url + "/v1/endpoint"
+
+	if namespace != "" {
+		url += "?namespace=" + namespace
+	}
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		return []types.Namespace{}, err
+		return []types.Endpoint{}, err
 	}
 
 	// add headers values
@@ -56,14 +60,15 @@ func (c *Client) GetNamespaceList() ([]types.Namespace, error) {
 	//
 	res, err := c.http.Do(req)
 
-	response := types.GetNamespaceListResponse{}
+	response := types.GetEndpointListResponse{}
 	json.NewDecoder(res.Body).Decode(&response)
 	if err != nil {
-		return []types.Namespace{}, err
+		return []types.Endpoint{}, err
 	}
 
 	if response.Status != "success" {
-		return []types.Namespace{}, errors.New("unexpected error")
+		// return "", errors.New(response.Error)
 	}
 	return response.Data, nil
+
 }

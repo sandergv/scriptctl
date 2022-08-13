@@ -26,6 +26,11 @@ type ScriptConfig struct {
 
 type ExecConfig struct {
 
+	// Script
+	//
+	// Required
+	Script string `yaml:"script" json:"script"`
+
 	//ExecEnv
 	//
 	// Optional, if is empty default env will be assign

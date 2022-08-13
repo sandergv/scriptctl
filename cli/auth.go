@@ -10,7 +10,7 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/sandergv/scriptctl/pkg/scriptlabctl"
+	"github.com/sandergv/scriptlab/pkg/scriptlabctl"
 	"golang.org/x/term"
 )
 

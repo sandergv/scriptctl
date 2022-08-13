@@ -1,5 +1,5 @@
 script:
-  name: "endpoint_script"
+  name: "endpoint script"
   description: ""
   type: "python"
   path: "./script.py"
@@ -19,6 +19,6 @@ exec:
 
 endpoint:
   name: "script"
-  namespace: "test"
-  private: false
-  method: "get" # get or post
+  namespace: "test" # namespace must be created before hand
+  private: false # private or public endpoint
+  method: "get" # get or post endpoint method

@@ -1,5 +1,7 @@
 package types
 
+import "time"
+
 type CreateScriptOptions struct {
 	Name        string `json:"name"`
 	Type        string `json:"type"`
@@ -10,10 +12,12 @@ type CreateScriptOptions struct {
 // requests types
 
 type Script struct {
-	ID       string `json:"id"`
-	Name     string `json:"name"`
-	Type     string `json:"type"`
-	FileName string `json:"file_name"`
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	Type      string    `json:"type"`
+	FileName  string    `json:"file_name"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type CreateScriptRequest struct {
@@ -45,5 +49,6 @@ type GetScriptResponse struct {
 
 type GetScriptListResponse struct {
 	Status string   `json:"status"`
+	Error  string   `json:"error"`
 	Data   []Script `json:"data"`
 }

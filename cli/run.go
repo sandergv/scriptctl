@@ -7,8 +7,8 @@ import (
 	"os"
 	"path"
 
-	"github.com/sandergv/scriptctl/pkg/scriptlabctl"
-	"github.com/sandergv/scriptctl/pkg/scriptlabctl/types"
+	"github.com/sandergv/scriptlab/pkg/scriptlabctl"
+	"github.com/sandergv/scriptlab/pkg/scriptlabctl/types"
 )
 
 type RunCMD struct {
@@ -61,7 +61,7 @@ func runCode(c *scriptlabctl.Client, fp string, env []string, args []string) (ty
 func showDetails(details types.RunDetails, out bool, logs bool, response bool) {
 	fmt.Println("Exit Code:", details.ExitCode)
 	if details.ExitCode != 0 {
-		fmt.Println(details.Error)
+		fmt.Println("err", details.Error)
 		return
 	}
 

@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/sandergv/scriptctl/pkg/scriptlabctl/types"
+	"github.com/sandergv/scriptlab/pkg/scriptlabctl/types"
 )
 
 func (c *Client) Login(username string, password string) (string, time.Time, error) {

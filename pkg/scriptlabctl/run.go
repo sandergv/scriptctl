@@ -6,7 +6,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/sandergv/scriptctl/pkg/scriptlabctl/types"
+	"github.com/sandergv/scriptlab/pkg/scriptlabctl/types"
 )
 
 func (c *Client) RunCode(opts types.RunCodeOptions) (types.RunDetails, error) {
