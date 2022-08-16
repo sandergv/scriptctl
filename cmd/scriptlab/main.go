@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"path"
 
@@ -14,22 +13,32 @@ func main() {
 
 	// check if folder exist
 	dir := path.Join(os.Getenv("HOME"), ".scriptlab")
-	storeFile := path.Join(dir, "store.json")
-	if _, err := os.Stat(dir); err != nil {
-		err := os.Mkdir(dir, os.ModePerm)
-		if err != nil {
-			fmt.Println("aca", err)
-		}
+	storeFile := path.Join(dir, "config.json")
+
+	cfg := cli.Config{
+		Workspaces: map[string]cli.WorkspaceDetails{},
 	}
-	// if _, err := os.Stat(store); err != nil {
-	// 	fmt.Println(err)
-	// 	fmt.Println("user is not logged in")
-	// }
-	store := cli.Store{}
 
-	bstore, _ := os.ReadFile(storeFile)
-	_ = json.Unmarshal(bstore, &store)
+	if _, err := os.Stat(storeFile); err != nil {
+		// fmt.Println(err)
+		_ = os.Mkdir(dir, os.ModePerm)
+		b, _ := json.Marshal(cfg)
+		_ = os.WriteFile(storeFile, b, os.ModePerm)
+	} else {
+		bconfig, _ := os.ReadFile(storeFile)
+		_ = json.Unmarshal(bconfig, &cfg)
+	}
 
-	client := scriptlabctl.NewClient(store.Token)
+	url := ""
+	token := ""
+	if a, ok := cfg.Workspaces[cfg.Workspace]; ok {
+		url = a.Host
+		token = a.Token
+	}
+
+	client := scriptlabctl.NewClient(scriptlabctl.ClientOptions{
+		Url:   url,
+		Token: token,
+	})
 	cli.Exec(client)
 }

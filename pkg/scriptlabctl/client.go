@@ -2,6 +2,11 @@ package scriptlabctl
 
 import "net/http"
 
+type ClientOptions struct {
+	Url   string
+	Token string
+}
+
 type Client struct {
 	url     string
 	token   string
@@ -9,20 +14,20 @@ type Client struct {
 	headers map[string]string
 }
 
-func NewClient(token string) *Client {
+func NewClient(opts ClientOptions) *Client {
 
 	headers := map[string]string{
 		"Content-Type": "application/json",
 	}
 
-	if token != "" {
-		headers["Authorization"] = "Bearer " + token
+	if opts.Token != "" {
+		headers["Authorization"] = "Bearer " + opts.Token
 	}
 
 	return &Client{
-		url:     "http://localhost:6892",
+		url:     opts.Url,
 		http:    &http.Client{},
-		token:   token,
+		token:   opts.Token,
 		headers: headers,
 	}
 }

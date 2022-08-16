@@ -26,6 +26,7 @@ type args struct {
 	Auth *AuthCMD `arg:"subcommand:auth" help:"Manage authentication"`
 
 	// management commands
+	Workspace *WorkspaceCMD `arg:"subcommand:workspace"`
 	Script    *ScriptCMD    `arg:"subcommand:script" help:"Manage scripts"`
 	Exec      *ExecCMD      `arg:"subcommand:exec" help:"Manage execution configs"`
 	Namespace *NamespaceCMD `arg:"subcommand:namespace" help:"Manage namespaces"`
@@ -52,8 +53,8 @@ func Exec(client *scriptlabctl.Client) {
 	ctx = context.WithValue(ctx, ParserContextKey, p)
 
 	switch {
-	case args.Auth != nil:
-		args.Auth.handle(client)
+	case args.Workspace != nil:
+		args.Workspace.handle(ctx)
 
 	case args.Script != nil:
 		err := args.Script.handle(ctx)

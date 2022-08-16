@@ -61,7 +61,6 @@ func (c *Client) GetNamespaceList() ([]types.Namespace, error) {
 	if err != nil {
 		return []types.Namespace{}, err
 	}
-
 	if response.Status != "success" {
 		return []types.Namespace{}, errors.New("unexpected error")
 	}

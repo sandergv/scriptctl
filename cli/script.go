@@ -33,7 +33,7 @@ func (s *ScriptCMD) handle(ctx context.Context) error {
 
 type CreateScriptCMD struct {
 	Name        string `arg:""`
-	Description string `arg:""`
+	Description string `arg:"" help:"prueba de help"`
 	Type        string `arg:""`
 	FilePath    string `arg:"positional" placeholder:"FILE"`
 }

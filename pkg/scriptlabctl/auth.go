@@ -8,14 +8,13 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/sandergv/scriptlab/pkg/scriptlabctl/types"
 )
 
-func (c *Client) Login(username string, password string) (string, time.Time, error) {
+func (c *Client) Login(host string, username string, password string) (types.AuthDetails, error) {
 
-	url := c.url + "/v1/auth/login"
+	url := host + "/v1/auth/login"
 
 	request := types.LoginRequest{
 		Username: username,
@@ -23,35 +22,39 @@ func (c *Client) Login(username string, password string) (string, time.Time, err
 	}
 	body, err := json.Marshal(request)
 	if err != nil {
-		return "", time.Time{}, err
+		return types.AuthDetails{}, err
 	}
 
 	//
 	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(body))
 	if err != nil {
-		return "", time.Time{}, err
+		return types.AuthDetails{}, err
 	}
 
 	c.setHeaders(req)
 	resp, err := c.http.Do(req)
 	if err != nil {
-		return "", time.Time{}, err
+		return types.AuthDetails{}, err
 	}
 
 	if resp.StatusCode != 200 {
 		fmt.Println(resp.StatusCode)
 		br, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return "", time.Time{}, err
+			return types.AuthDetails{}, err
 		}
-		return "", time.Time{}, errors.New(strings.ReplaceAll(string(br), "\n", ""))
+		return types.AuthDetails{}, errors.New(strings.ReplaceAll(string(br), "\n", ""))
 	}
 
 	response := types.LoginResponse{}
 	json.NewDecoder(resp.Body).Decode(&response)
 	if err != nil {
-		return "", time.Time{}, err
+		return types.AuthDetails{}, err
 	}
 
-	return response.Token, response.ExpiresAt, nil
+	return types.AuthDetails{
+		WorkspaceID: response.WorkspaceID,
+		Token:       response.Token,
+		ExpiresAt:   response.ExpiresAt,
+	}, nil
 }
