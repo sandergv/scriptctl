@@ -9,4 +9,4 @@ response = {
     "data": "data"
 }
 
-sl.response(json.dumps(response))
+sl.response("todo ok")

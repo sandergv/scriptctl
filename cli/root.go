@@ -10,7 +10,6 @@ import (
 
 const (
 	ClientContextKey = iota
-	ParentCommandContextKey
 	ParserContextKey
 )
 
@@ -23,7 +22,7 @@ func getParserFromContext(ctx context.Context) *arg.Parser {
 }
 
 type args struct {
-	Auth *AuthCMD `arg:"subcommand:auth" help:"Manage authentication"`
+	// Auth *AuthCMD `arg:"subcommand:auth" help:"Manage authentication"`
 
 	// management commands
 	Workspace *WorkspaceCMD `arg:"subcommand:workspace"`
@@ -32,8 +31,10 @@ type args struct {
 	Namespace *NamespaceCMD `arg:"subcommand:namespace" help:"Manage namespaces"`
 	Endpoint  *EndpointCMD  `arg:"subcommand:endpoint" help:"Manage endpoints"`
 	Action    *ActionCMD    `arg:"subcommand:action" help:"Manage actions"`
+	Command   *CommandCMD   `arg:"subcommand:command" help:"Mannage commands"`
 
-	// comands
+	// commands
+	Cmd     *CmdCMD     `arg:"subcommand:cmd" help:"Run script commands"`
 	Create  *CreateCMD  `arg:"subcommand:create" help:"Create resources with a configuration file"`
 	Run     *RunCMD     `arg:"subcommand:run" help:"Run a script with the given options"`
 	Version *VersionCMD `arg:"subcommand:version" help:"Show scriptlab version"`
@@ -49,7 +50,6 @@ func Exec(client *scriptlabctl.Client) {
 
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, ClientContextKey, client)
-	ctx = context.WithValue(ctx, ParentCommandContextKey, "root")
 	ctx = context.WithValue(ctx, ParserContextKey, p)
 
 	switch {
@@ -87,6 +87,16 @@ func Exec(client *scriptlabctl.Client) {
 		err := args.Action.handle(ctx)
 		if err != nil {
 			p.FailSubcommand(err.Error(), "action")
+		}
+	case args.Command != nil:
+		err := args.Command.handle(ctx)
+		if err != nil {
+			p.FailSubcommand(err.Error(), "command")
+		}
+	case args.Cmd != nil:
+		err := args.Cmd.handle(ctx)
+		if err != nil {
+			p.FailSubcommand(err.Error(), "cmd")
 		}
 	case args.Run != nil:
 		args.Run.handle(client)

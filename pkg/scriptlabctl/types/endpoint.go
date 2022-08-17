@@ -47,10 +47,16 @@ type DeleteEndpointResponse struct {
 	Status string `json:"status"`
 }
 
+type ContextLookup struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
 type Namespace struct {
-	ID        string     `json:"id"`
-	Name      string     `json:"name"`
-	Endpoints []Endpoint `json:"endpoints"`
+	ID      string        `json:"id"`
+	Name    string        `json:"name"`
+	Env     []string      `json:"env"`
+	Context ContextLookup `json:"context"`
 }
 
 type CreateNamespaceOptions struct {
@@ -66,6 +72,7 @@ type CreateNamespaceResponse struct {
 
 type GetNamespaceResponse struct {
 	Status string    `json:"status"`
+	Error  string    `json:"error"`
 	Data   Namespace `json:"data"`
 }
 

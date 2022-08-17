@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/sandergv/scriptlab/pkg/scriptlabctl/types"
@@ -63,6 +64,32 @@ func (c *Client) GetNamespaceList() ([]types.Namespace, error) {
 	}
 	if response.Status != "success" {
 		return []types.Namespace{}, errors.New("unexpected error")
+	}
+	return response.Data, nil
+}
+
+func (c *Client) GetNamespace(namespace string) (types.Namespace, error) {
+
+	url := c.url + "/v1/namespace/" + namespace
+	fmt.Println(url)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return types.Namespace{}, err
+	}
+
+	// add headers values
+	c.setHeaders(req)
+
+	//
+	res, err := c.http.Do(req)
+	response := types.GetNamespaceResponse{}
+	json.NewDecoder(res.Body).Decode(&response)
+	fmt.Println(response)
+	if err != nil {
+		return types.Namespace{}, err
+	}
+	if response.Status != "success" {
+		return types.Namespace{}, errors.New("unexpected error")
 	}
 	return response.Data, nil
 }

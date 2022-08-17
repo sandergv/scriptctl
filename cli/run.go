@@ -15,6 +15,7 @@ type RunCMD struct {
 	File string   `arg:"-f"`
 	Env  []string `arg:"-e"`
 	Exec string
+
 	Args []string `arg:"-a"`
 
 	Out      bool `arg:"--show-output"`

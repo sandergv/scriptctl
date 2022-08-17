@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 	"sort"
 	"time"
@@ -18,9 +19,6 @@ type ScriptCMD struct {
 
 func (s *ScriptCMD) handle(ctx context.Context) error {
 
-	if s.Create != nil {
-		s.Create.handle(ctx)
-	}
 	switch {
 	case s.Create != nil:
 		s.Create.handle(ctx)
@@ -46,12 +44,18 @@ func (c *CreateScriptCMD) handle(ctx context.Context) error {
 		return errors.New("file parameter is required")
 	}
 
+	content, err := os.ReadFile(c.FilePath)
+	if err != nil {
+		return err
+	}
+
 	fileName := filepath.Base(c.FilePath)
 
 	id, err := client.CreateScript(types.CreateScriptOptions{
-		Name:     c.Name,
-		Type:     c.Type,
-		FileName: fileName,
+		Name:        c.Name,
+		Type:        c.Type,
+		FileName:    fileName,
+		FileContent: string(content),
 	})
 	if err != nil {
 		return err
