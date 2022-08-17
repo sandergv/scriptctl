@@ -14,6 +14,7 @@ import (
 
 type ScriptCMD struct {
 	Create *CreateScriptCMD `arg:"subcommand:create"`
+	Update *UpdateScriptCMD `arg:"subcommand:update"`
 	List   *ListScripCMD    `arg:"subcommand:list"`
 }
 
@@ -22,6 +23,9 @@ func (s *ScriptCMD) handle(ctx context.Context) error {
 	switch {
 	case s.Create != nil:
 		s.Create.handle(ctx)
+	case s.Update != nil:
+		s.Update.handle(ctx)
+
 	case s.List != nil:
 		s.List.handle(ctx)
 	}
@@ -53,6 +57,7 @@ func (c *CreateScriptCMD) handle(ctx context.Context) error {
 
 	id, err := client.CreateScript(types.CreateScriptOptions{
 		Name:        c.Name,
+		Description: c.Description,
 		Type:        c.Type,
 		FileName:    fileName,
 		FileContent: string(content),
@@ -60,7 +65,31 @@ func (c *CreateScriptCMD) handle(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(id)
+	fmt.Println("Script ID:", id)
+	return nil
+}
+
+type UpdateScriptCMD struct {
+	ID       string `arg:"positional,required"`
+	FilePath string `arg:"positional,required" placeholder:"FILE"`
+}
+
+func (u *UpdateScriptCMD) handle(ctx context.Context) error {
+	client := getClientFromContext(ctx)
+
+	content, err := os.ReadFile(u.FilePath)
+	if err != nil {
+		return err
+	}
+
+	updatedAt, err := client.UpdateScript(types.UpdateScriptFileRequest{
+		ID:          u.ID,
+		FileContent: string(content),
+	})
+	if err != nil {
+		return err
+	}
+	fmt.Println("Updated At:", updatedAt.Format(time.RFC3339Nano))
 	return nil
 }
 
@@ -71,7 +100,7 @@ func (l *ListScripCMD) handle(ctx context.Context) error {
 
 	client := getClientFromContext(ctx)
 
-	head := []string{"ID", "NAME", "TYPE", "CREATED"}
+	head := []string{"ID", "NAME", "DESCRIPTION", "TYPE", "CREATED", "UPDATED"}
 
 	data := [][]string{}
 
@@ -86,7 +115,7 @@ func (l *ListScripCMD) handle(ctx context.Context) error {
 	})
 
 	for _, v := range scripts {
-		data = append(data, []string{v.ID, v.Name, v.Type, time.Since(v.CreatedAt).Round(time.Second).String()})
+		data = append(data, []string{v.ID, v.Name, v.Description, v.Type, time.Since(v.CreatedAt).Round(time.Second).String(), time.Since(v.UpdatedAt).Round(time.Second).String()})
 	}
 
 	showTable(head, data)

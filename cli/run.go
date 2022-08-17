@@ -39,10 +39,6 @@ func (r *RunCMD) handle(client *scriptlabctl.Client) {
 		}
 	}
 
-	if r.Exec != "" {
-
-	}
-
 }
 
 func runCode(c *scriptlabctl.Client, fp string, env []string, args []string) (types.RunDetails, error) {

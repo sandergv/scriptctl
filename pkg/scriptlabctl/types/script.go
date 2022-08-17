@@ -4,6 +4,7 @@ import "time"
 
 type CreateScriptOptions struct {
 	Name        string `json:"name"`
+	Description string `json:"description"`
 	Type        string `json:"type"`
 	FileName    string `json:"file_name"`
 	FileContent string `json:"file_content"`
@@ -12,16 +13,18 @@ type CreateScriptOptions struct {
 // requests types
 
 type Script struct {
-	ID        string    `json:"id"`
-	Name      string    `json:"name"`
-	Type      string    `json:"type"`
-	FileName  string    `json:"file_name"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID          string    `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Type        string    `json:"type"`
+	FileName    string    `json:"file_name"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 type CreateScriptRequest struct {
 	Name        string `json:"name"`
+	Description string `json:"description"`
 	Type        string `json:"type"`
 	FileName    string `json:"file_name"`
 	FileContent string `json:"file_content"`
@@ -39,7 +42,9 @@ type UpdateScriptFileRequest struct {
 }
 
 type UpdateScriptFileResponse struct {
-	Status string `json:"status"`
+	Status    string    `json:"status"`
+	Error     string    `json:"error"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type GetScriptResponse struct {
