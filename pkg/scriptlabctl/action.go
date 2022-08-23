@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/sandergv/scriptlab/pkg/scriptlabctl/types"
@@ -37,7 +38,7 @@ func (c *Client) CreateAction(opts types.CreateActionRequest) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
+	fmt.Println(response)
 	if response.Status == "error" {
 		return "", errors.New(response.Error)
 	}

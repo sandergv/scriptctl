@@ -1,16 +1,18 @@
 package types
 
 type Action struct {
-	ID     string       `json:"id"`
-	Name   string       `json:"name"`
-	Script ScriptLookup `json:"script"`
-	ExecID string       `json:"exec_id"`
+	ID          string          `json:"id"`
+	Name        string          `json:"name"`
+	Description string          `json:"description"`
+	Namespace   NamespaceLookup `json:"namespace"`
+	Script      ScriptLookup    `json:"script"`
 }
 
 type CreateActionRequest struct {
-	Name     string `json:"name"`
-	ScriptID string `json:"script_id"`
-	ExecID   string `json:"exec_id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Namespace   string `json:"namespace"`
+	ScriptID    string `json:"script_id"`
 }
 
 type CreateActionResponse struct {

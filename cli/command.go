@@ -33,9 +33,10 @@ func (c *CommandCMD) handle(ctx context.Context) error {
 
 type CreateCommandCMD struct {
 	Name        string   `arg:"positional"` // unique
-	Description string   `arg:"-d"`
-	Env         []string `arg:"-e"`
 	Script      string   `arg:"positional"`
+	Description string   `arg:"-d"`
+	Namespace   string   `arg:"-n"`
+	Env         []string `arg:"-e"`
 }
 
 func (c *CreateCommandCMD) handle(ctx context.Context) error {
@@ -45,6 +46,7 @@ func (c *CreateCommandCMD) handle(ctx context.Context) error {
 	id, err := client.CreateCommand(types.CreateCommandRequest{
 		Name:        c.Name,
 		Description: c.Description,
+		Namespace:   c.Namespace,
 		Env:         c.Env,
 		ScriptID:    c.Script,
 	})
@@ -69,12 +71,12 @@ func (l *ListCommandCMD) handle(ctx context.Context) error {
 		return err
 	}
 
-	header := []string{"ID", "NAME", "DESCRIPTION", "SCRIPT"}
+	header := []string{"ID", "NAME", "DESCRIPTION", "SCRIPT", "NAMESPACE"}
 
 	data := [][]string{}
 
 	for _, d := range commands {
-		data = append(data, []string{d.ID, d.Name, d.Description, d.Script.Name})
+		data = append(data, []string{d.ID, d.Name, d.Description, d.Script.Name, d.Namespace})
 	}
 
 	showTable(header, data)

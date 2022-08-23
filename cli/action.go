@@ -35,13 +35,15 @@ func (a *ActionCMD) handle(ctx context.Context) error {
 }
 
 type CreateActionCMD struct {
-	Name string `arg:"positional,required"`
-	Exec string `arg:"positional,required"`
+	Name        string `arg:"positional,required"`
+	Script      string `arg:"positional,required"`
+	Namespace   string `arg:"-n"`
+	Description string `arg:"-d"`
 }
 
 func (c *CreateActionCMD) handle(ctx context.Context) error {
 
-	valid, _ := regexp.MatchString("^[a-z-_]{3,12}", c.Name)
+	valid, _ := regexp.MatchString("^[a-z_]{3,12}", c.Name)
 
 	if !valid {
 		return errors.New("invalid action name")
@@ -50,8 +52,10 @@ func (c *CreateActionCMD) handle(ctx context.Context) error {
 	client := getClientFromContext(ctx)
 
 	id, err := client.CreateAction(types.CreateActionRequest{
-		Name:   c.Name,
-		ExecID: c.Exec,
+		Name:        c.Name,
+		Description: c.Description,
+		Namespace:   c.Namespace,
+		ScriptID:    c.Script,
 	})
 	if err != nil {
 		return err
@@ -74,12 +78,12 @@ func (l *ListActionCMD) handle(ctx context.Context) error {
 		return err
 	}
 
-	headers := []string{"ID", "NAME", "SCRIPT", "EXEC ID"}
+	headers := []string{"ID", "NAME", "DESCRIPTION", "SCRIPT", "NAMESPACE"}
 
 	data := [][]string{}
 
 	for _, a := range acts {
-		data = append(data, []string{a.ID, a.Name, a.Script.Name, a.ExecID})
+		data = append(data, []string{a.ID, a.Name, a.Description, a.Script.Name, a.Namespace.Name})
 	}
 
 	showTable(headers, data)

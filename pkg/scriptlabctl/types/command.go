@@ -4,6 +4,7 @@ type Command struct {
 	ID          string       `json:"id"`
 	Name        string       `json:"name"`
 	Description string       `json:"description"`
+	Namespace   string       `json:"namespace"`
 	Env         []string     `json:"env"`
 	Script      ScriptLookup `json:"script"`
 	Context     string       `json:"context"`
@@ -12,6 +13,7 @@ type Command struct {
 type CreateCommandRequest struct {
 	Name        string   `json:"name"`
 	Description string   `json:"description"`
+	Namespace   string   `json:"namespace"`
 	Env         []string `json:"env"`
 	ScriptID    string   `json:"script_id"`
 }

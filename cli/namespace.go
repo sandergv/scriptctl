@@ -40,8 +40,9 @@ func (n *NamespaceCMD) handle(ctx context.Context) error {
 }
 
 type CreateNamespaceCMD struct {
-	Name string   `arg:"positional"`
-	Env  []string `arg:"-e"`
+	Name        string   `arg:"positional"`
+	Description string   `arg:"-d"`
+	Env         []string `arg:"-e"`
 }
 
 func (c *CreateNamespaceCMD) handle(ctx context.Context) error {
@@ -57,8 +58,9 @@ func (c *CreateNamespaceCMD) handle(ctx context.Context) error {
 	client := ctx.Value(ClientContextKey).(*scriptlabctl.Client)
 
 	id, err := client.CreateNamespace(types.CreateNamespaceOptions{
-		Name: c.Name,
-		Env:  c.Env,
+		Name:        c.Name,
+		Description: c.Description,
+		Env:         c.Env,
 	})
 	if err != nil {
 		return err
@@ -79,11 +81,11 @@ func (l *ListNamespaceCMD) handle(ctx context.Context) error {
 		return err
 	}
 
-	header := []string{"ID", "NAME", "CONTEXT"}
+	header := []string{"ID", "NAME", "DESCRIPTION", "CONTEXT"}
 
 	data := [][]string{}
 	for _, v := range nss {
-		data = append(data, []string{v.ID, v.Name, v.Context.Name})
+		data = append(data, []string{v.ID, v.Name, v.Description, v.Context.Name})
 	}
 
 	showTable(header, data)

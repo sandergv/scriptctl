@@ -53,15 +53,17 @@ type ContextLookup struct {
 }
 
 type Namespace struct {
-	ID      string        `json:"id"`
-	Name    string        `json:"name"`
-	Env     []string      `json:"env"`
-	Context ContextLookup `json:"context"`
+	ID          string        `json:"id"`
+	Name        string        `json:"name"`
+	Description string        `json:"description"`
+	Env         []string      `json:"env"`
+	Context     ContextLookup `json:"context"`
 }
 
 type CreateNamespaceOptions struct {
-	Name string   `json:"name"`
-	Env  []string `json:"env"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Env         []string `json:"env"`
 }
 
 type CreateNamespaceResponse struct {
