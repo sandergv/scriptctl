@@ -10,7 +10,6 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-//
 type ScriptConfig struct {
 	Name        string `yaml:"name" json:"name"`
 	Description string `yaml:"description" json:"description"`
@@ -19,9 +18,6 @@ type ScriptConfig struct {
 
 	// Required
 	FilePath string `yaml:"path" json:"path"`
-
-	// Optional
-	DefaultExec bool `yaml:"default-exec" json:"default_exec"`
 }
 
 type ExecConfig struct {
@@ -56,6 +52,8 @@ type ContextConfig struct {
 	// Required
 	Name string `yaml:"name" json:"name"`
 
+	Env []string `yaml:"env" json:"env"`
+
 	// Optional
 	Data map[string]interface{} `yaml:"data" json:"data"`
 }
@@ -69,12 +67,19 @@ type EndpointConfig struct {
 	Namespace string `yaml:"namespace" json:"namespace"`
 	Private   bool   `yaml:"private" json:"private"`
 	Method    string `yaml:"method" json:"method"`
-	Exec      string `yaml:"exec" json:"exec"`
+	Script    string `yaml:"script" json:"script"`
 }
 
 type ActionConfig struct {
-	Name string `yaml:"name" json:"name"`
-	Exec string `yaml:"exec" json:"exec"`
+	Name      string `yaml:"name" json:"name"`
+	Namespace string `yaml:"namespace" json:"namespace"`
+	Script    string `yaml:"script" json:"script"`
+}
+
+type CommandConfig struct {
+	Name      string `yaml:"name" json:"name"`
+	Namespace string `yaml:"namespace" json:"namespace"`
+	Script    string `yaml:"script" json:"script"`
 }
 
 type ConfigFile struct {
@@ -84,6 +89,7 @@ type ConfigFile struct {
 	// Namespace
 	Endpoint *EndpointConfig `yaml:"endpoint" json:"endpoint"`
 	Action   *ActionConfig   `yaml:"action" json:"action"`
+	Command  *CommandConfig  `yaml:"command" json:"command"`
 }
 
 func parseConfig(fp string) (ConfigFile, error) {

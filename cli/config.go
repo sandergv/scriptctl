@@ -7,10 +7,6 @@ import (
 	"time"
 )
 
-type Store struct {
-	Token string `json:"token"`
-}
-
 type WorkspaceDetails struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`

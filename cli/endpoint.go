@@ -37,8 +37,8 @@ type CreateEndpointCMD struct {
 	Name      string `arg:"positional,required"`
 	Api       string `arg:"" default:"private"`
 	Method    string `arg:"" default:"get"`
-	Namespace string `arg:"positional,required"`
-	ExecID    string `arg:"positional,required"`
+	Namespace string `arg:"-n"`
+	Script    string `arg:"positional,required"`
 }
 
 func (c *CreateEndpointCMD) handle(ctx context.Context) error {
@@ -46,7 +46,7 @@ func (c *CreateEndpointCMD) handle(ctx context.Context) error {
 	client := getClientFromContext(ctx)
 
 	private := true
-	if c.Method == "public" {
+	if c.Api == "public" {
 		private = false
 	}
 
@@ -55,7 +55,7 @@ func (c *CreateEndpointCMD) handle(ctx context.Context) error {
 		Namespace: c.Namespace,
 		Method:    c.Method,
 		Private:   private,
-		ExecID:    c.ExecID,
+		ScriptID:  c.Script,
 	})
 	if err != nil {
 		return err
@@ -81,17 +81,17 @@ func (l *ListEndpointCMD) handle(ctx context.Context) error {
 	// order namespace's endpoints
 	ns := map[string][]types.Endpoint{}
 	for _, e := range eps {
-		if v, ok := ns[e.Namespace]; ok {
+		if v, ok := ns[e.Namespace.Name]; ok {
 			v = append(v, e)
-			ns[e.Namespace] = v
+			ns[e.Namespace.Name] = v
 		} else {
-			ns[e.Namespace] = []types.Endpoint{
+			ns[e.Namespace.Name] = []types.Endpoint{
 				e,
 			}
 		}
 	}
 
-	header := []string{"ID", "NAME", "METHOD", "API", "NAMESPACE", "EXEC ID"}
+	header := []string{"ID", "NAME", "METHOD", "API", "NAMESPACE", "SCRIPT"}
 
 	data := [][]string{}
 
@@ -104,7 +104,7 @@ func (l *ListEndpointCMD) handle(ctx context.Context) error {
 				api = "public"
 			}
 			data = append(data,
-				[]string{e.ID, e.Name, e.Method, api, e.Namespace, e.ExecID},
+				[]string{e.ID, e.Name, e.Method, api, e.Namespace.Name, e.Script.Name},
 			)
 		}
 	}

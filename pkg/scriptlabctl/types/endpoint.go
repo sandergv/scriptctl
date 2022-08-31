@@ -6,12 +6,12 @@ type NamespaceLookup struct {
 }
 
 type Endpoint struct {
-	ID        string `json:"id"`
-	Name      string `json:"name"`
-	Namespace string `json:"namespace,omitempty"`
-	Private   bool   `json:"private"`
-	Method    string `json:"method"`
-	ExecID    string `json:"exec_id"`
+	ID        string          `json:"id"`
+	Name      string          `json:"name"`
+	Namespace NamespaceLookup `json:"namespace,omitempty"`
+	Private   bool            `json:"private"`
+	Method    string          `json:"method"`
+	Script    ScriptLookup    `json:"script"`
 }
 
 type CreateEndpointOptions struct {
@@ -19,10 +19,6 @@ type CreateEndpointOptions struct {
 	Namespace string `json:"namespace"`
 	Private   bool   `json:"private"`
 	Method    string `json:"method"`
-
-	// if ExecID is empty a new exec it will be created
-	ExecID string `json:"exec_id"`
-
 	// if exec id is emty a script id must be provide
 	ScriptID string `json:"script_id"`
 }
@@ -53,11 +49,11 @@ type ContextLookup struct {
 }
 
 type Namespace struct {
-	ID          string        `json:"id"`
-	Name        string        `json:"name"`
-	Description string        `json:"description"`
-	Env         []string      `json:"env"`
-	Context     ContextLookup `json:"context"`
+	ID          string   `json:"id"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Env         []string `json:"env"`
+	Context     string   `json:"context"`
 }
 
 type CreateNamespaceOptions struct {

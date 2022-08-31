@@ -85,7 +85,7 @@ func (l *ListNamespaceCMD) handle(ctx context.Context) error {
 
 	data := [][]string{}
 	for _, v := range nss {
-		data = append(data, []string{v.ID, v.Name, v.Description, v.Context.Name})
+		data = append(data, []string{v.ID, v.Name, v.Description, v.Context})
 	}
 
 	showTable(header, data)

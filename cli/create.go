@@ -63,16 +63,27 @@ func createFromConfig(ctx context.Context, fp string) error {
 		}
 		fmt.Println("Exec ID:", execId)
 	}
-	if cfg.Endpoint != nil {
-		if execId != "" {
-			cfg.Endpoint.Exec = execId
+	// if cfg.Endpoint != nil {
+	// 	if execId != "" {
+	// 		cfg.Endpoint.Exec = execId
+	// 	}
+	// 	epId, err := createEndpoint(client, *cfg.Endpoint)
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 		return err
+	// 	}
+	// 	fmt.Println("Endpoint ID:", epId)
+	// }
+	if cfg.Action != nil {
+		if scriptId != "" {
+			cfg.Action.Script = scriptId
 		}
-		epId, err := createEndpoint(client, *cfg.Endpoint)
+		actId, err := createAction(client, *cfg.Action)
 		if err != nil {
 			fmt.Println(err)
 			return err
 		}
-		fmt.Println("Endpoint ID:", epId)
+		fmt.Println("Action ID:", actId)
 	}
 
 	return nil
@@ -110,6 +121,22 @@ func createExec(client *scriptlabctl.Client, cfg ExecConfig) (string, error) {
 	})
 }
 
+func createAction(client *scriptlabctl.Client, cfg ActionConfig) (string, error) {
+
+	if cfg.Name == "" {
+		return "", errors.New("name parameter can't be empty")
+	}
+	if cfg.Script == "" {
+		return "", errors.New("script parameter can't be empty")
+	}
+
+	return client.CreateAction(types.CreateActionRequest{
+		Name: cfg.Name,
+		// description
+		ScriptID: cfg.Script,
+	})
+}
+
 func createEndpoint(client *scriptlabctl.Client, cfg EndpointConfig) (string, error) {
 	if cfg.Name == "" {
 		return "", errors.New("name parameter is required")
@@ -120,9 +147,9 @@ func createEndpoint(client *scriptlabctl.Client, cfg EndpointConfig) (string, er
 	if cfg.Method == "" {
 		return "", errors.New("method parameter is required")
 	}
-	if cfg.Exec == "" {
-		return "", errors.New("exec parameter is required")
-	}
+	// if cfg.Exec == "" {
+	// 	return "", errors.New("exec parameter is required")
+	// }
 
 	// check if namespace exist
 	nss, err := client.GetNamespaceList()
@@ -152,6 +179,6 @@ func createEndpoint(client *scriptlabctl.Client, cfg EndpointConfig) (string, er
 		Namespace: cfg.Namespace,
 		Private:   cfg.Private,
 		Method:    cfg.Method,
-		ExecID:    cfg.Exec,
+		// ExecID:    cfg.Exec,
 	})
 }
