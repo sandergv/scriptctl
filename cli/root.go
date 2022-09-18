@@ -32,7 +32,7 @@ type args struct {
 	Endpoint  *EndpointCMD  `arg:"subcommand:endpoint" help:"Manage endpoints"`
 	Action    *ActionCMD    `arg:"subcommand:action" help:"Manage actions"`
 	Command   *CommandCMD   `arg:"subcommand:command" help:"Mannage commands"`
-
+	Event     *EventCMD     `arg:"subcommand:event" help:"Manage events"`
 	// commands
 	Cmd     *CmdCMD     `arg:"subcommand:cmd" help:"Run script commands"`
 	Create  *CreateCMD  `arg:"subcommand:create" help:"Create resources with a configuration file"`
@@ -100,6 +100,9 @@ func Exec(client *scriptlabctl.Client) {
 		}
 	case args.Run != nil:
 		args.Run.handle(client)
+
+	case args.Event != nil:
+		args.Event.handle(ctx)
 
 	case args.Version != nil:
 		args.Version.handle()
